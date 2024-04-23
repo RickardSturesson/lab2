@@ -10,12 +10,10 @@ function Welcome(props) {
   );
 }
 
-// Komponent för att representera en enskild post i listan
 function ListItem({ text }) {
   return <li>{text}</li>;
 }
 
-// Huvudkomponent för listvyn
 function List() {
   const items = ["Item 1", "Item 2", "Item 3"];
 

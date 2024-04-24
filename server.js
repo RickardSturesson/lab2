@@ -3,13 +3,15 @@ import Employee from "./Models/Employee.js"
 import Project from "./Models/Project.js"
 import Project_assignment from "./Models/Project_assignment.js";
 import mongoose from "mongoose";
+import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
 
 app.use(express.static("dist"));
-app.use(express.json())
+app.use(express.json());
+app.use(cors());
 
 const port = process.env.PORT || 3000;
 const uri = process.env.URI;
@@ -77,7 +79,7 @@ app.post("/api/project_assignments", async (req, res) => {
 
 app.get("/api/project_assignments", async (req, res) => {
     try {
-        const project_assignment = await Project_assignment.aggregate([
+        const project_assignments = await Project_assignment.aggregate([
             {
                 $lookup: {
                     from: 'employee',
@@ -91,8 +93,8 @@ app.get("/api/project_assignments", async (req, res) => {
                 },
                 {$lookup: {
                     from: 'project',
-                    localField: 'project_id',
-                    foreignField: 'project_id',
+                    localField: 'project_code',
+                    foreignField: 'project_code',
                     as: 'project'
                     }
                 },
@@ -109,7 +111,8 @@ app.get("/api/project_assignments", async (req, res) => {
                     }
                 }
         ]);
-        res.json({message: project_assignment})
+        console.log(project_assignments);
+        res.json({project_assignments: project_assignments});
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');        

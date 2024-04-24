@@ -1,35 +1,45 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import ReactDOM from "react-dom";
+import { Table } from "./Modules/table.js";
+// import createData from "./Modules/createData.js";
 
-function Welcome(props) {
+async function createData () {
+  try{
+      const response = await fetch("http://localhost:3000/api/project_assignments");
+      const project_assignments = await response.json();
+      console.log("Data fetched")
+      console.log(project_assignments);
+      return project_assignments;
+  } catch(error){
+      console.error("Error fetching data", error);
+  }
+};
+
+function App() {
+  const [projectAssignments, setProjectAssignments] = useState([]);
+
+  useEffect(() => {
+      async function fetchData() {
+          const data = await createData();
+          console.log("THIS IS THE DATA:" + data)
+          setProjectAssignments(data);
+      }
+      fetchData();
+  }, []);
+
+    // Kontrollera om projectAssignments är en Promise och rendera en laddningsindikator i så fall
+    if (projectAssignments instanceof Promise) {
+      return <p>Loading...</p>;
+    }
+  
+    // Kontrollera om projectAssignments är tomt och rendera en meddelande om ingen data finns
+    if (projectAssignments.length === 0) {
+      return <p>No data available</p>;
+    }
+
   return (
-    <div>
-      <h1>Hello, {props.name}</h1>
-      <p>Todays subject is: {props.subject}</p>
-    </div>
+  <Table project_assignments={projectAssignments} />
   );
 }
 
-function ListItem({ text }) {
-  return <li>{text}</li>;
-}
-
-function List() {
-  const items = ["Item 1", "Item 2", "Item 3"];
-
-  return (
-    <div>
-      <h2>Lista med React</h2>
-      <ul>
-        {items.map((item, index) => (
-          <ListItem key={index} text={item} />
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-const element = <Welcome name="Kenneth" subject="math" />;
-ReactDOM.render(element, document.getElementById("index"));
-
-ReactDOM.render(<List />, document.getElementById("list"));
+ReactDOM.render(<App />, document.getElementById("index"));

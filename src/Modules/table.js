@@ -1,8 +1,8 @@
 import React from "react";
 
-export async function Table ({project_assignments}) {
+function Table ({project_assignments}) {
     if (!project_assignments || project_assignments.length === 0) {
-        return <p>No data available</p>;
+        return <p>No data available in table</p>;
       }
     return (
         <table>
@@ -20,7 +20,7 @@ export async function Table ({project_assignments}) {
                         <td>{item.employee_id}</td>
                         <td>{item.employee_name}</td>
                         <td>{item.project_name}</td>
-                        <td>{item.start_date}</td>
+                        <td>{new Date(item.start_date).toLocaleDateString()}</td>
                     </tr>
                 ))}
             </tbody>
@@ -28,3 +28,4 @@ export async function Table ({project_assignments}) {
     );
 }
 
+export default Table;
